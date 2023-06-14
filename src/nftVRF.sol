@@ -27,19 +27,21 @@ contract PatrickInTheGym is
     //Chainlink Variables
     VRFCoordinatorV2Interface private immutable CoordinatorInterface;
     uint64 private immutable _subscriptionId;
-    address vrfCoordinatorV2Address = 0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed;
+    address private immutable _vrfCoordinatorV2Address;
     bytes32 keyHash = 0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f;
-    uint32 callbackGasLimit = 20000;
+    uint32 callbackGasLimit = 200000;
     uint16 blockConfirmations = 10;
     uint32 numWords = 1;
 
     constructor(
-        uint64 subscriptionId
+        uint64 subscriptionId,
+        address vrfCoordinatorV2Address
     )
         ERC1155("ipfs://QmXN7twhiJF7pSttkvqxfok9o5p1QWJeCbwRTZvZ5RCzvz/{id}.json")
         VRFConsumerBaseV2(vrfCoordinatorV2Address)
     {
         _subscriptionId = subscriptionId;
+        _vrfCoordinatorV2Address= vrfCoordinatorV2Address;
         CoordinatorInterface = VRFCoordinatorV2Interface(vrfCoordinatorV2Address);
     }
 
@@ -83,7 +85,10 @@ contract PatrickInTheGym is
             tokenId = 3;
         }
         
+        // Updating the mapping
         _minted[minter] = true;
+
+        // Finally mint the token
         _mint(minter, tokenId, 1, "");
 
         // emit an event
