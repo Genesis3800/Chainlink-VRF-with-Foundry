@@ -6,11 +6,18 @@ import "../src/nftVRF.sol";
 import "../lib/chainlink-brownie-contracts/contracts/src/v0.8/mocks/VRFCoordinatorV2Mock.sol";
 
 contract PatrickInTheGymTest is Test {
+
+    //Creating instances of the main contract
+    //and the mock contract
     PatrickInTheGym public patrickInTheGym;
     VRFCoordinatorV2Mock public mock;
 
+    //To keep track of the number of NFTs
+    //of each tokenID
     mapping(uint256 => uint256) supplytracker;
-
+    
+    //This is a shorthand used to represent the full address
+    // address(1) == 0x0000000000000000000000000000000000000001
     address alpha = address(1);
 
     function setUp() public {
@@ -36,8 +43,12 @@ contract PatrickInTheGymTest is Test {
     function testRandomness() public {
 
         for (uint i = 1; i <= 1000; i++) {
-        address addr = address(bytes20(uint160(i)));
 
+        //Creating a random address using the 
+        //variable {i}
+        //Useful to call the mint function from a 100
+        //different addresses
+        address addr = address(bytes20(uint160(i)));
         vm.prank(addr);
         uint requestID = patrickInTheGym.mint();
 
@@ -47,6 +58,7 @@ contract PatrickInTheGymTest is Test {
         vm.prank(address(mock));
         mock.fulfillRandomWords(requestID,address(patrickInTheGym));
         }
+
         supplytracker[1] = patrickInTheGym.totalSupply(1);
         supplytracker[2] = patrickInTheGym.totalSupply(2);
         supplytracker[3] = patrickInTheGym.totalSupply(3);
